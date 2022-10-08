@@ -1,7 +1,7 @@
 #include "window.hpp"
 
 void Window::onCreate() {
-  // Load font with bigger size for the X's and O's
+  // carregando fonte
   auto const filename{abcg::Application::getAssetsPath() +
                       "Inconsolata-Medium.ttf"};
   m_font = ImGui::GetIO().Fonts->AddFontFromFileTTF(filename.c_str(), 72.0f);
@@ -13,7 +13,7 @@ void Window::onCreate() {
 }
 
 void Window::onPaintUI() {
-  // Get size of application's window
+  // capturando tmanho da janela
   auto const appWindowWidth{gsl::narrow<float>(getWindowSettings().width)};
   auto const appWindowHeight{gsl::narrow<float>(getWindowSettings().height)};
 
@@ -26,7 +26,6 @@ void Window::onPaintUI() {
                      ImGuiWindowFlags_NoCollapse};
     ImGui::Begin("Calculator", nullptr, flags);
 
-    // grid superior
     {
       auto const buttonHeight{70};
       static std::vector comboItems{"+", "-", "*", "/"};
