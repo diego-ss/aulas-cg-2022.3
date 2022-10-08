@@ -9,10 +9,10 @@ protected:
   void onPaintUI() override;
 
 private:
-  static std::string firstNumber;
-  static std::string secondNumber;
-  static std::string calculationOperator;
-  static std::string result;
+  float operator1{0.0f};
+  float operator2{0.0f};
+  float result{0.0f};
+  std::string calcOperator{"+"};
 
   ImFont *m_font{};
 
