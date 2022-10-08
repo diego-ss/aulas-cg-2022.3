@@ -1,3 +1,9 @@
+<h1 align="center">Diego Sousa Santos - 11044616</h1>
+
+<p align="center">
+    <img  src="https://user-images.githubusercontent.com/55899445/194708500-d6d7288c-7e47-44f4-b2e0-af67640d99d9.png" width="150" height="150"/>
+</p>
+
 # ABCg
 
 ![linux workflow](https://github.com/hbatagelo/abcg/actions/workflows/linux.yml/badge.svg)
@@ -14,98 +20,190 @@ ABCg is a lightweight C++ framework that simplifies the development of 3D graphi
 
 * * *
 
-## Atividade 01
+## Atividade 01 - SimpleCalculator
 
--   Includes helper classes and functions for loading textures (using [SDL_image](https://www.libsdl.org/projects/SDL_image/)), loading OBJ 3D models (using [tinyobjloader](https://github.com/tinyobjloader/tinyobjloader)), and compiling GLSL shaders to SPIR-V with [glslang](https://github.com/KhronosGroup/glslang).
+<p align="center">
+    <img width="456" alt="simpleCalculatorIMG" src="https://user-images.githubusercontent.com/55899445/194708704-9e639cb6-2a07-48f9-84ef-48868aa4f470.PNG">
+</p>
+
+-   Link GitHub Pages: [SimpleCalculator](https://diego-ss.github.io/cg-2022.3-UFABC/simpleCalculator/)
+
+### Descrição geral
+
+-   O propósito da aplicação é simular o funcionamento de uma calculadora simples (com as operações básicas) com as técnicas apresentadas até então durante as aulas da disciplina, visando atender os requisitos propostos na atividade 1.
+-   Para isso, existe uma tela com dois inputs que representam os números envolvidos na operação, com um combobox indicando as operações possíveis, dois botões para calcular e limpar os parâmetros e um label para exibir o resultado.
+-   Os operadores e resultado são armazenados em variáveis da classe Window.
+
+### Detalhes da implementação
+
+#### Assets
+-   Como assets auxiliares, foi utilizada a fonte Inconsolata-Medium como no projeto TicTacToe.
+#### main.cpp
+-   No arquivo main foi utilizada a implementação padrão que vimos em aula.
+#### window.hpp
+-   Para a definição da classe Window, foram sobrescritos dois métodos da classe OpenGLWindow (da qual Window tem herança): onCreate e onPaintUI.
+```cpp
+protected:
+  void onCreate() override;
+  void onPaintUI() override;
+```
+-   Além disso, foram definidas as seguintes variáveis e métodos auxiliares para o processamento:
+```cpp
+private:
+  float operator1{0.0f}; // REFERE-SE AO VALOR NUMÉRICO DO PRIMEIRO OPERADOR
+  float operator2{0.0f}; // REFERE-SE AO VALOR NUMÉRICO DO SEGUNDO OPERADOR
+  float result{0.0f}; // ARMAZENA O RESULTADO DA OPERAÇÃO MATEMÁTICA
+  std::string calcOperator{"+"}; // INDICADOR DE QUAL OPERAÇÃO SERÁ REALIZADA
+
+  ImFont *m_font{}; // FONTE DE TEXTO
+
+  void calculate(); // MÉTODO AUXILIAR PARA REALIZAR O CÁLCULO COM BASE NOS PARÂMETROS INFORMADOS
+  void clear(); // MÉTODO AUXILIAR PARA LIMPAR OS DADOS DA CALCULADORA
+```
+#### window.cpp
+-   Neste arquivo foram implementados os métodos sobrescritos e os novos definidos na classe Window, do arquivo window.hpp.
+-   A ideia da composição da janela foi considerar uma tabela com seis linhas, todas com uma coluna apenas: 
+    -  a primeira contém um input para que o usuário digite o primeiro número da operação.
+    -  a segunda contém um combobox com as operações disponíveis. 
+    -  a terceira contém um input para que o usuário digite o segunda número da operação.
+    -  a quarta contém um botão que confirma a realização da operação.
+    -  a quinta contém uma label que exibe o resultado da operação matemática.
+    -  a sexta contém um botão responsável por limpar os operadores e o resultado.
+-   No método onCreate é ralizado o import da fonte de texto e zerados os operadores.
+```cpp
+void Window::onCreate() {
+  // Load font with bigger size for the X's and O's
+  auto const filename{abcg::Application::getAssetsPath() +
+                      "Inconsolata-Medium.ttf"};
+  m_font = ImGui::GetIO().Fonts->AddFontFromFileTTF(filename.c_str(), 72.0f);
+  if (m_font == nullptr) {
+    throw abcg::RuntimeError{"Cannot load font file"};
+  }
+
+  clear();
+}
+```
+-   No método clear, é realizada a limpeza dos operadores e do resultado.
+```cpp
+void Window::clear() {
+  operator1 = 0.0f;
+  operator2 = 0.0f;
+  result = 0.0f;
+}
+```
+-   No método calculate, é realizada a operação com base nos parâmetros informados pelo usuário.
+```cpp
+void Window::calculate() {
+  // verificar o operador
+  if (calcOperator == "+")
+    result = operator1 + operator2;
+  else if (calcOperator == "-")
+    result = operator1 - operator2;
+  else if (calcOperator == "*")
+    result = operator1 * operator2;
+  else if (calcOperator == "/")
+    result = operator1 / operator2;
+}
+```
+-   No método onPaintUI é onde está sendo realizada toda definição dos elementos de UI da tela da calculadora.
+-   Para isso, dentro dele foram definidas as seguintes variáveis:
+```cpp
+      auto const buttonHeight{70}; // altura fixa dos botões
+      static std::vector comboItems{"+", "-", "*", "/"}; // vetor de strings com as operações possíveis
+      static std::size_t currentIndex{}; // índice da operação selecionada pelo usuário
+```
+-   Após isso é iniciada a tabela e definida cada uma de suas linhas. 
+```cpp
+        // primeira linha da tabela
+        ImGui::TableNextRow();
+        {
+          // primeiro número da operação
+          ImGui::TableSetColumnIndex(0);
+          // ajustando largura do input
+          ImGui::PushItemWidth(appWindowWidth);
+          // input de float
+          ImGui::InputFloat("op1", &operator1);
+        }
+```
+```cpp
+        // segunda linha da tabela
+        ImGui::TableNextRow();
+        {
+          ImGui::TableSetColumnIndex(0);
+          // combo do operador
+          if (ImGui::BeginCombo("Combo Operador",
+                                comboItems.at(currentIndex))) {
+            for (auto index{0U}; index < comboItems.size(); ++index) {
+              bool const isSelected{currentIndex == index};
+              if (ImGui::Selectable(comboItems.at(index), isSelected)) {
+                currentIndex = index;
+                calcOperator = comboItems.at(currentIndex); // SETANDO A VARIÁVEL DO OPERADOR QUANDO ALGUM ITEM É SELECIONADO
+              }
+
+              if (isSelected)
+                ImGui::SetItemDefaultFocus();
+            }
+            ImGui::EndCombo();
+          }
+        }
+```
+```cpp
+        // terceira linha da tabela
+        ImGui::TableNextRow();
+        {
+          // segundo número da operação
+          ImGui::TableSetColumnIndex(0);
+          // ajustando largura do input
+          ImGui::PushItemWidth(appWindowWidth);
+          // input de float
+          ImGui::InputFloat("op2", &operator2);
+        }
+```
+```cpp
+        // quarta linha da tabela
+        ImGui::TableNextRow();
+        {
+          // botão de realizar operação
+          ImGui::TableSetColumnIndex(0);
+          if (ImGui::Button("=", ImVec2(-1, buttonHeight))) {
+            calculate(); // REALIZANDO O CÁLCULO QUANDO O BOTÃO É ACIONADO
+          }
+        }
+```
+```cpp
+      // quinta linha da tabela
+        ImGui::TableNextRow();
+        {
+          // resultado da operação
+          ImGui::TableSetColumnIndex(0);
+          ImGui::SetCursorPosX(
+              (appWindowWidth -
+               ImGui::CalcTextSize(std::to_string(result).c_str()).x) /
+              2);
+          ImGui::Text("%s", std::to_string(result).c_str()); // EXIBINDO O RESULTADO NA LABEL
+        }
+```
+```cpp
+        // sexta linha da tabela
+        ImGui::TableNextRow();
+        {
+          // botão de limpar números
+          ImGui::TableSetColumnIndex(0);
+          if (ImGui::Button("clear", ImVec2(-1, buttonHeight))) {
+            clear(); // LIMPANDO PARÂMETROS E RESULTADO
+          }
+        }
+```
+-   Para compilação web, foi utilizado o arquivo html do tictactoe adapatado para esta aplicação.
+
+### Resultado Final
+<p align="center">
+    <img src="https://user-images.githubusercontent.com/55899445/194710962-51332d27-a383-4e27-aa58-99d1d52cf3b8.gif"/>
+</p>
+
 
 * * *
 
-## Requirements
-
-The following minimum requirements are shared among all platforms:
-
--   [CMake](https://cmake.org/) 3.21.
--   A C++ compiler with at least partial support for C++20 (tested with GCC 11, Clang 13, MSVC 17, and emcc 3.1).
--   A system with support for OpenGL 3.3 (OpenGL backend) or Vulkan 1.3 (Vulkan backend). Conformant software rasterizers such as Mesa's [Gallium llvmpipe](https://docs.mesa3d.org/drivers/llvmpipe.html) and lavapipe (post Jun 2022) are supported. Mesa's [D3D12](https://devblogs.microsoft.com/directx/directx-heart-linux/) backend on [WSL 2.0](https://docs.microsoft.com/en-us/windows/wsl/install) is supported as well.
-
-For WebAssembly:
-
--   [Emscripten](https://emscripten.org/).
--   A browser with support for WebGL 2.0.
-
-For building desktop applications:
-
--   [SDL](https://www.libsdl.org/) 2.0.
--   [SDL_image](https://www.libsdl.org/projects/SDL_image/) 2.0.
--   [GLEW](http://glew.sourceforge.net/) 2.2.0 (required for OpenGL-based applications).
--   [Vulkan](https://www.lunarg.com/vulkan-sdk/) 1.3 (required for Vulkan-based applications).
-
-Desktop dependencies can be resolved automatically with [Conan](https://conan.io/). It is disabled by default. To use it, install Conan 1.47 or later and then configure CMake with `-DENABLE_CONAN=ON`.
-
-The default renderer backend is OpenGL (CMake option `GRAPHICS_API=OpenGL`). To use the Vulkan backend, configure CMake with `-DGRAPHICS_API=Vulkan`.
-
-* * *
-
-## Installation and usage
-
-Start by cloning the repository:
-
-    # Get abcg repo
-    git clone https://github.com/hbatagelo/abcg.git
-
-    # Enter the directory
-    cd abcg
-
-Follow the instructions below to build the "Hello, World!" sample located in `abcg/examples/helloworld`.
-
-### Windows
-
--   Run `build-vs.bat` for building with the Visual Studio 2022 toolchain.
--   Run `build.bat` for building with GCC (MinGW-w64).
-
-`build-vs.bat` and `build.bat` accept two optional arguments: (1) the build type, which is `Release` by default, and (2) an extra CMake option. For example, for a `Debug` build with `-DENABLE_CONAN=ON` using VS 2022, run 
-
-    build-vs.bat Debug -DENABLE_CONAN=ON
-
-### Linux and macOS
-
-Run `./build.sh`.
-
-The script accepts two optional arguments: (1) the build type, which is `Release` by default, and (2) an extra CMake option. For example, for a `Debug` build with `-DENABLE_CONAN=ON`, run 
-
-    ./build.sh Debug -DENABLE_CONAN=ON
-
-### WebAssembly
-
-1.  Run `build-wasm.bat` (Windows) or `./build-wasm.sh` (Linux/macOS).
-2.  Run `runweb.bat` (Windows) or `./runweb.sh` (Linux/macOS) for setting up a local web server.
-3.  Open <http://localhost:8080/helloworld.html>.
-
-* * *
-
-## Docker setup
-
-ABCg can be built in a [Docker](https://www.docker.com/) container. The Dockerfile provided is based on Ubuntu 22.04 and includes Emscripten.
-
-1.  Create the Docker image (`abcg`):
-
-        sudo docker build -t abcg .
-
-2.  Create the container (`abcg_container`):
-
-        sudo docker create -it \
-          -p 8080:8080 \
-          -v /tmp/.X11-unix:/tmp/.X11-unix:rw \
-          -e DISPLAY \
-          --name abcg_container abcg
-
-3.  Start the container:
-
-        sudo docker start -ai abcg_container
-
-    On NVIDIA GPUs, install the [NVIDIA Container Toolkit](https://github.com/NVIDIA/nvidia-docker) to allow the container to use the host's NVIDIA driver and X server. Expose the X server with `sudo xhost +local:root` before starting the container.
-
-* * *
 
 ## License
 
