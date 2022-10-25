@@ -64,6 +64,7 @@ void Window::restart() {
   m_gameData.m_state = State::Playing;
 
   m_ball.create(m_objectsProgram);
+  m_spikes.create(m_objectsProgram, 3);
 }
 
 void Window::onUpdate() {
@@ -77,12 +78,14 @@ void Window::onUpdate() {
   }
 
   m_ball.update(m_gameData, deltaTime);
+  m_spikes.update(m_ball, deltaTime);
 }
 
 void Window::onPaint() {
   abcg::glClear(GL_COLOR_BUFFER_BIT);
   abcg::glViewport(0, 0, m_viewportSize.x, m_viewportSize.y);
 
+  m_spikes.paint();
   m_ball.paint(m_gameData);
 }
 
@@ -121,5 +124,6 @@ void Window::onResize(glm::ivec2 const &size) {
 void Window::onDestroy() {
   abcg::glDeleteProgram(m_objectsProgram);
 
+  m_spikes.destroy();
   m_ball.destroy();
 }

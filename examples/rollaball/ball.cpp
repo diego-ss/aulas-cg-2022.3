@@ -17,7 +17,6 @@ void Ball::create(GLuint program) {
   // Reset ball attributes
   m_rotation = 0.0f;
   m_translation = glm::vec2(-0.7f, 0.0f);
-  m_velocity = glm::vec2(0);
 
   // clang-format off
   std::array positions{

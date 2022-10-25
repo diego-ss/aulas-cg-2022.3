@@ -15,7 +15,7 @@ public:
   float m_rotation{};
   float m_scale{0.125f};
   glm::vec2 m_translation{};
-  glm::vec2 m_velocity{};
+  glm::vec2 m_velocity{1.0f, 0.0f};
 
   bool isJumping{false};     // INDICADOR DE PULO
   bool isFallingDown{false}; /// INDICADOR DE QUEDA
