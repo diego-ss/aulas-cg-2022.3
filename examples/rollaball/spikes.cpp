@@ -20,19 +20,19 @@ void Spikes::create(GLuint program, int quantity) {
   m_spikes.clear();
   m_spikes.resize(quantity);
 
-  float lastSpikePos{0.5f};
+  float lastSpikePos{1.0f};
 
   for (auto &spike : m_spikes) {
     spike = makeSpike();
 
-    float minDist{lastSpikePos + 1.0f};
-    float maxDist{lastSpikePos + 2.0f};
+    float minDist{lastSpikePos + 0.0f};
+    float maxDist{lastSpikePos + 0.0f};
 
     std::uniform_real_distribution<float> randomDist(minDist, maxDist);
     // Make sure the spike won't collide with the ball
     float randomX = randomDist(m_randomEngine);
     lastSpikePos = randomX;
-    spike.m_translation = {randomX, 0.0f};
+    spike.m_translation = {randomX, -0.01f};
   }
 }
 

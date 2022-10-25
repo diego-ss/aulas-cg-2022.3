@@ -32,7 +32,7 @@ public:
 
   std::list<Spike> m_spikes;
 
-  Spike makeSpike(glm::vec2 translation = {}, float scale = 0.08f);
+  Spike makeSpike(glm::vec2 translation = {}, float scale = 0.06f);
 
 private:
   GLuint m_program{};

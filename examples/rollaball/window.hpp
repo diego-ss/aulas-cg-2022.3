@@ -34,6 +34,7 @@ private:
   std::default_random_engine m_randomEngine;
 
   void restart();
+  void checkCollisions();
 };
 
 #endif
