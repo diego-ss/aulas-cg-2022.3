@@ -64,7 +64,7 @@ void Window::restart() {
   m_gameData.m_state = State::Playing;
 
   m_ball.create(m_objectsProgram);
-  m_spikes.create(m_objectsProgram, 3);
+  m_spikes.create(m_objectsProgram, 2);
 }
 
 void Window::onUpdate() {
