@@ -17,8 +17,10 @@ public:
   glm::vec2 m_translation{};
   glm::vec2 m_velocity{1.0f, 0.0f};
 
-  bool isJumping{false};     // INDICADOR DE PULO
-  bool isFallingDown{false}; /// INDICADOR DE QUEDA
+  bool isJumping{false};       // INDICADOR DE PULO
+  bool isFallingDown{false};   // INDICADOR DE QUEDA
+  bool isBoosted{false};       // INDICADOR DE BOOST
+  float m_velocityBoost{3.0f}; // BOOST DE VELOCIDADE
 
   float const m_maxTranslationY{0.6f}; // LIMITE SUPERIOR DO PULO
   float const m_minTranslationY{0.0f}; // CHÃO

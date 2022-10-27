@@ -119,6 +119,15 @@ void Ball::update(GameData const &gameData, float deltaTime) {
     isJumping = true;
   }
 
+  // Detecção de boost
+  if(gameData.m_input[gsl::narrow<size_t>(Input::Space)] && !isBoosted){
+    m_velocity += m_velocityBoost;
+    isBoosted = true;
+  } else if(m_velocity.x > 1.0f) {
+    m_velocity -= m_velocityBoost;
+    isBoosted = false;
+  }
+
   // Aplicando pulo
   if (isJumping && m_translation.y < m_maxTranslationY){
     auto const jumpVector = glm::vec2{0.0f, m_jumpForce};

@@ -24,6 +24,8 @@ void Spikes::create(GLuint program, int quantity) {
   for (auto &spike : m_spikes) {
     spike = makeSpike();
     spike.m_translation = {1.0f + i, -0.01f};
+
+    i += 0.2f;
   }
 }
 
@@ -72,7 +74,7 @@ void Spikes::update(const Ball &ball, float deltaTime) {
     if (spike.m_translation.x < -1.0f) {
       std::uniform_real_distribution<float> randomDists(0.0f, 1.0f);
       float randomDist = randomDists(m_randomEngine) + 1.0f;
-      spike.m_translation.x += randomDist;
+      spike.m_translation.x += 2.0f;
     }
   }
 }
