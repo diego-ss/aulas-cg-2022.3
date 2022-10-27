@@ -69,8 +69,9 @@ void Spikes::update(const Ball &ball, GameData &gameData, float deltaTime) {
       auto &re{m_randomEngine};
       float randomDist = randomDists(re) + 2.0f;
       spike.m_translation.x += randomDist;
-      gameData.m_score += 1;
-      printf("SCORE: %i  ", gameData.m_score);
+
+      if (gameData.m_state == State::Playing)
+        gameData.m_score += 1;
     }
   }
 }

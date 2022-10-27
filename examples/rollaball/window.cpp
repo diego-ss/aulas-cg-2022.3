@@ -96,22 +96,35 @@ void Window::onPaint() {
 void Window::onPaintUI() {
   abcg::OpenGLWindow::onPaintUI();
 
+  ImGuiWindowFlags const flags{ImGuiWindowFlags_NoBackground |
+                               ImGuiWindowFlags_NoTitleBar |
+                               ImGuiWindowFlags_NoInputs};
+
+  if (m_gameData.m_state == State::Playing) {
+    {
+      ImGui::SetNextWindowPos(ImVec2(5, 10));
+      ImGui::Begin(" ", nullptr, flags);
+      ImGui::PushFont(m_font);
+
+      ImGui::Text("Score: %i", m_gameData.m_score);
+
+      ImGui::PopFont();
+      ImGui::End();
+    }
+  }
+
   {
-    auto const size{ImVec2(300, 85)};
+    auto const size{ImVec2(300, 200)};
     auto const position{ImVec2((m_viewportSize.x - size.x) / 2.0f,
-                               (m_viewportSize.y - size.y) / 2.0f)};
+                               (m_viewportSize.y - size.y - 100) / 2.0f)};
     ImGui::SetNextWindowPos(position);
     ImGui::SetNextWindowSize(size);
-    ImGuiWindowFlags const flags{ImGuiWindowFlags_NoBackground |
-                                 ImGuiWindowFlags_NoTitleBar |
-                                 ImGuiWindowFlags_NoInputs};
+
     ImGui::Begin(" ", nullptr, flags);
     ImGui::PushFont(m_font);
 
     if (m_gameData.m_state == State::GameOver) {
-      ImGui::Text("Game Over!");
-    } else if (m_gameData.m_state == State::Win) {
-      ImGui::Text("*You Win!*");
+      ImGui::Text("Game Over!\nScore: %i", m_gameData.m_score);
     }
 
     ImGui::PopFont();
