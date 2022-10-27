@@ -39,14 +39,10 @@ void Spikes::paint() {
     abcg::glUniform1f(m_scaleLoc, spike.m_scale);
     abcg::glUniform1f(m_rotationLoc, spike.m_rotation);
 
-    for (auto i : {-2, 0, 2}) {
-      for (auto j : {-2, 0, 2}) {
-        abcg::glUniform2f(m_translationLoc, spike.m_translation.x + j,
-                          spike.m_translation.y + i);
+    abcg::glUniform2f(m_translationLoc, spike.m_translation.x,
+                      spike.m_translation.y);
 
-        abcg::glDrawArrays(GL_TRIANGLE_FAN, 0, spike.m_polygonSides + 2);
-      }
-    }
+    abcg::glDrawArrays(GL_TRIANGLE_FAN, 0, spike.m_polygonSides + 2);
 
     abcg::glBindVertexArray(0);
   }
@@ -61,8 +57,7 @@ void Spikes::destroy() {
   }
 }
 
-void Spikes::update(const Ball &ball, GameData const &gameData,
-                    float deltaTime) {
+void Spikes::update(const Ball &ball, GameData &gameData, float deltaTime) {
   for (auto &spike : m_spikes) {
     // spike.m_translation.x -= ball.m_velocity.x * deltaTime * 10.0f;
     //      glm::wrapAngle(spike.m_rotation + spike.m_angularVelocity *
@@ -72,9 +67,10 @@ void Spikes::update(const Ball &ball, GameData const &gameData,
     if (spike.m_translation.x < -1.0f) {
       std::uniform_real_distribution<float> randomDists(0.0f, 0.9f);
       auto &re{m_randomEngine};
-      float randomDist = randomDists(re) + 2.1f;
-      spike.m_translation.x = randomDist;
+      float randomDist = randomDists(re) + 2.0f;
+      spike.m_translation.x += randomDist;
       gameData.m_score += 1;
+      printf("SCORE: %i  ", gameData.m_score);
     }
   }
 }
@@ -96,13 +92,6 @@ Spikes::Spike Spikes::makeSpike(glm::vec2 translation, float scale) {
   spike.m_rotation = 1.6f;
   spike.m_scale = scale;
   spike.m_translation = translation;
-
-  // Get a random angular velocity
-  spike.m_angularVelocity = m_randomDist(re);
-
-  // Get a random direction
-  glm::vec2 const direction{m_randomDist(re), m_randomDist(re)};
-  // spike.m_velocity = glm::normalize(direction) / 7.0f;
 
   // Create geometry data
   std::vector<glm::vec2> positions{{0, 0}};

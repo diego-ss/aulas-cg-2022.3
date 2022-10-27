@@ -14,20 +14,18 @@ public:
   void create(GLuint program, int quantity);
   void paint();
   void destroy();
-  void update(const Ball &ball, GameData const &gameData, float deltaTime);
+  void update(const Ball &ball, GameData &gameData, float deltaTime);
 
   struct Spike {
     GLuint m_VAO{};
     GLuint m_VBO{};
 
-    float m_angularVelocity{};
     glm::vec4 m_color{1};
     bool m_hit{};
     int m_polygonSides{};
     float m_rotation{};
     float m_scale{};
     glm::vec2 m_translation{};
-    glm::vec2 m_velocity{1.0f, 0.0f};
   };
 
   std::list<Spike> m_spikes;

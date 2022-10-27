@@ -62,6 +62,7 @@ void Window::onCreate() {
 
 void Window::restart() {
   m_gameData.m_state = State::Playing;
+  m_gameData.m_score = 0;
 
   m_ball.create(m_objectsProgram);
   m_spikes.create(m_objectsProgram, 4);
@@ -88,8 +89,8 @@ void Window::onPaint() {
   abcg::glClear(GL_COLOR_BUFFER_BIT);
   abcg::glViewport(0, 0, m_viewportSize.x, m_viewportSize.y);
 
-  m_spikes.paint();
   m_ball.paint(m_gameData);
+  m_spikes.paint();
 }
 
 void Window::onPaintUI() {
