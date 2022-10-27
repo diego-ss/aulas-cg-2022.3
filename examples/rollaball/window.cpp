@@ -64,7 +64,7 @@ void Window::restart() {
   m_gameData.m_state = State::Playing;
 
   m_ball.create(m_objectsProgram);
-  m_spikes.create(m_objectsProgram, 3);
+  m_spikes.create(m_objectsProgram, 4);
 }
 
 void Window::onUpdate() {
@@ -78,7 +78,7 @@ void Window::onUpdate() {
   }
 
   m_ball.update(m_gameData, deltaTime);
-  m_spikes.update(m_ball, deltaTime);
+  m_spikes.update(m_ball, m_gameData, deltaTime);
 
   if (m_gameData.m_state == State::Playing)
     checkCollisions();
@@ -134,11 +134,10 @@ void Window::onDestroy() {
 void Window::checkCollisions() {
   // Check collision between ship and asteroids
   for (auto const &spike : m_spikes.m_spikes) {
-    auto const asteroidTranslation{spike.m_translation};
-    auto const distance{
-        glm::distance(m_ball.m_translation, asteroidTranslation)};
+    auto const spikeTranslation{spike.m_translation};
+    auto const distance{glm::distance(m_ball.m_translation, spikeTranslation)};
 
-    if (distance < m_ball.m_scale * 0.9f + spike.m_scale * 0.85f) {
+    if (distance < m_ball.m_scale * 0.9f + spike.m_scale * 0.17f) {
       m_gameData.m_state = State::GameOver;
       m_restartWaitTimer.restart();
     }

@@ -61,20 +61,20 @@ void Spikes::destroy() {
   }
 }
 
-void Spikes::update(const Ball &ball, float deltaTime) {
+void Spikes::update(const Ball &ball, GameData const &gameData,
+                    float deltaTime) {
   for (auto &spike : m_spikes) {
     // spike.m_translation.x -= ball.m_velocity.x * deltaTime * 10.0f;
     //      glm::wrapAngle(spike.m_rotation + spike.m_angularVelocity *
     //      deltaTime);
     spike.m_translation.x -= ball.m_velocity.x * deltaTime;
 
-    // Destruir quando sair da tela
-    //  Wrap-around
-
     if (spike.m_translation.x < -1.0f) {
-      std::uniform_real_distribution<float> randomDists(0.0f, 1.0f);
-      float randomDist = randomDists(m_randomEngine) + 1.0f;
-      spike.m_translation.x += 2.0f;
+      std::uniform_real_distribution<float> randomDists(0.0f, 0.9f);
+      auto &re{m_randomEngine};
+      float randomDist = randomDists(re) + 2.1f;
+      spike.m_translation.x = randomDist;
+      gameData.m_score += 1;
     }
   }
 }

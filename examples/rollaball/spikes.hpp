@@ -14,7 +14,7 @@ public:
   void create(GLuint program, int quantity);
   void paint();
   void destroy();
-  void update(const Ball &ball, float deltaTime);
+  void update(const Ball &ball, GameData const &gameData, float deltaTime);
 
   struct Spike {
     GLuint m_VAO{};
