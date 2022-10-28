@@ -51,17 +51,14 @@ void Spikes::paint() {
   abcg::glUseProgram(m_program);
 
   for (auto const &spike : m_spikes) {
-    abcg::glBindVertexArray(spike.m_VAO);
-
-    abcg::glUniform4fv(m_colorLoc, 1, &spike.m_color.r);
-    abcg::glUniform1f(m_scaleLoc, spike.m_scale);
-    abcg::glUniform1f(m_rotationLoc, spike.m_rotation);
-
+    abcg::glBindVertexArray(spike.m_VAO); // BIND DOS ATRIBUTOS DO VERTEX AO VAO
+    abcg::glUniform4fv(m_colorLoc, 1, &spike.m_color.r); // VARIÁVEL UNIFORME
+    abcg::glUniform1f(m_scaleLoc, spike.m_scale);        // VARIÁVEL UNIFORME
+    abcg::glUniform1f(m_rotationLoc, spike.m_rotation);  // VARIÁVEL UNIFORME
     abcg::glUniform2f(m_translationLoc, spike.m_translation.x,
-                      spike.m_translation.y);
-
-    abcg::glDrawArrays(GL_TRIANGLE_FAN, 0, spike.m_polygonSides + 2);
-
+                      spike.m_translation.y); // VARIÁVEL UNIFORME
+    abcg::glDrawArrays(GL_TRIANGLE_FAN, 0,
+                       spike.m_polygonSides + 2); // DESENHANDO OS PONTOS
     abcg::glBindVertexArray(0);
   }
 
@@ -69,6 +66,7 @@ void Spikes::paint() {
 }
 
 void Spikes::destroy() {
+  // liberação dos VBOs e VAOs
   for (auto &spike : m_spikes) {
     abcg::glDeleteBuffers(1, &spike.m_VBO);
     abcg::glDeleteVertexArrays(1, &spike.m_VAO);
@@ -96,23 +94,13 @@ void Spikes::update(const Ball &ball, GameData &gameData, float deltaTime) {
   }
 }
 
-Spikes::Spike Spikes::makeSpike(glm::vec2 translation, float scale) {
+Spikes::Spike Spikes::makeSpike() {
   Spike spike;
-
   auto &re{m_randomEngine}; // Shortcut
-
-  // Randomly pick the number of sides
-  std::uniform_int_distribution randomSides(3, 3);
-  spike.m_polygonSides = randomSides(re);
 
   // Get a random color (actually, a grayscale)
   std::uniform_real_distribution randomIntensity(0.5f, 1.0f);
   spike.m_color = glm::vec4(randomIntensity(re));
-
-  spike.m_color.a = 1.0f;
-  spike.m_rotation = 1.6f;
-  spike.m_scale = scale;
-  spike.m_translation = translation;
 
   // Create geometry data
   std::vector<glm::vec2> positions{{0, 0}};
@@ -124,21 +112,21 @@ Spikes::Spike Spikes::makeSpike(glm::vec2 translation, float scale) {
   }
   positions.push_back(positions.at(1));
 
-  // Generate VBO
+  // GErando VBO
   abcg::glGenBuffers(1, &spike.m_VBO);
   abcg::glBindBuffer(GL_ARRAY_BUFFER, spike.m_VBO);
   abcg::glBufferData(GL_ARRAY_BUFFER, positions.size() * sizeof(glm::vec2),
                      positions.data(), GL_STATIC_DRAW);
   abcg::glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-  // Get location of attributes in the program
+  // Localização dos atributos no programa
   auto const positionAttribute{
       abcg::glGetAttribLocation(m_program, "inPosition")};
 
-  // Create VAO
+  // Criando VAO
   abcg::glGenVertexArrays(1, &spike.m_VAO);
 
-  // Bind vertex attributes to current VAO
+  // Bind dos vertices ao VAO
   abcg::glBindVertexArray(spike.m_VAO);
 
   abcg::glBindBuffer(GL_ARRAY_BUFFER, spike.m_VBO);
@@ -147,7 +135,7 @@ Spikes::Spike Spikes::makeSpike(glm::vec2 translation, float scale) {
                               nullptr);
   abcg::glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-  // End of binding to current VAO
+  // Fim do binding
   abcg::glBindVertexArray(0);
 
   return spike;

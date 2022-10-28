@@ -18,20 +18,14 @@ protected:
   void onDestroy() override;
 
 private:
-  glm::ivec2 m_viewportSize{};
-
-  GLuint m_objectsProgram{};
-
-  GameData m_gameData;
-
-  Ball m_ball;
-  Spikes m_spikes;
-
-  abcg::Timer m_restartWaitTimer;
-
-  ImFont *m_font{};
-
-  std::default_random_engine m_randomEngine;
+  glm::ivec2 m_viewportSize{}; // DIMENSÕES DA JANELA
+  GLuint m_objectsProgram{}; // OBJECTS PROGRAM
+  GameData m_gameData; // GAME DATA REF
+  Ball m_ball; // BALL REF
+  Spikes m_spikes; // SPIKES REF
+  abcg::Timer m_restartWaitTimer; // TEMPORIZADOR
+  ImFont *m_font{}; // FONTE
+  std::default_random_engine m_randomEngine; // RANDOMIZADOR
 
   void restart();
   void checkCollisions();

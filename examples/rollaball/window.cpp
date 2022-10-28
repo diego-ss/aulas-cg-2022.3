@@ -1,7 +1,7 @@
 #include "window.hpp"
 
 void Window::onEvent(SDL_Event const &event) {
-  // Keyboard events
+  // Eventos do teclado
   if (event.type == SDL_KEYDOWN) {
     if (event.key.keysym.sym == SDLK_SPACE)
       m_gameData.m_input.set(gsl::narrow<size_t>(Input::Space));
@@ -15,7 +15,7 @@ void Window::onEvent(SDL_Event const &event) {
       m_gameData.m_input.reset(gsl::narrow<size_t>(Input::Up));
   }
 
-  // Mouse events
+  // Eventos do mouse
   if (event.type == SDL_MOUSEBUTTONDOWN) {
     if (event.button.button == SDL_BUTTON_LEFT)
       m_gameData.m_input.set(gsl::narrow<size_t>(Input::Space));
@@ -33,20 +33,21 @@ void Window::onEvent(SDL_Event const &event) {
 void Window::onCreate() {
   auto const assetsPath{abcg::Application::getAssetsPath()};
 
-  // Load a new font
+  // Carregando fonte
   auto const filename{assetsPath + "Inconsolata-Medium.ttf"};
   m_font = ImGui::GetIO().Fonts->AddFontFromFileTTF(filename.c_str(), 60.0f);
   if (m_font == nullptr) {
     throw abcg::RuntimeError("Cannot load font file");
   }
 
-  // Create program to render the other objects
+  // Criando programa para renderizar objetos
   m_objectsProgram =
       abcg::createOpenGLProgram({{.source = assetsPath + "objects.vert",
                                   .stage = abcg::ShaderStage::Vertex},
                                  {.source = assetsPath + "objects.frag",
                                   .stage = abcg::ShaderStage::Fragment}});
 
+  // limpando tela com a cor preta
   abcg::glClearColor(0, 0, 0, 1);
 
 #if !defined(__EMSCRIPTEN__)
@@ -61,9 +62,11 @@ void Window::onCreate() {
 }
 
 void Window::restart() {
+  // estado inicial do jogo
   m_gameData.m_state = State::Playing;
   m_gameData.m_score = 0;
 
+  // criando bola e espinhos
   m_ball.create(m_objectsProgram);
   m_spikes.create(m_objectsProgram, 4);
 }
@@ -71,16 +74,18 @@ void Window::restart() {
 void Window::onUpdate() {
   auto const deltaTime{gsl::narrow_cast<float>(getDeltaTime())};
 
-  // Wait 5 seconds before restarting
+  // Aguardando 5 minutos para reiniciar o jogo
   if (m_gameData.m_state != State::Playing &&
       m_restartWaitTimer.elapsed() > 5) {
     restart();
     return;
   }
 
+  // atualizações da bola e dos espinhos
   m_ball.update(m_gameData, deltaTime);
   m_spikes.update(m_ball, m_gameData, deltaTime);
 
+  // verificando colisões
   if (m_gameData.m_state == State::Playing)
     checkCollisions();
 }
@@ -89,6 +94,7 @@ void Window::onPaint() {
   abcg::glClear(GL_COLOR_BUFFER_BIT);
   abcg::glViewport(0, 0, m_viewportSize.x, m_viewportSize.y);
 
+  // método paint dos objetos
   m_ball.paint(m_gameData);
   m_spikes.paint();
 }
@@ -100,6 +106,7 @@ void Window::onPaintUI() {
                                ImGuiWindowFlags_NoTitleBar |
                                ImGuiWindowFlags_NoInputs};
 
+  // Printando Score enquanto o jogo está rodando
   if (m_gameData.m_state == State::Playing) {
     {
       ImGui::SetNextWindowPos(ImVec2(5, 10));
@@ -113,6 +120,7 @@ void Window::onPaintUI() {
     }
   }
 
+  // printando Game Over + Score ao finalizar
   {
     auto const size{ImVec2(300, 200)};
     auto const position{ImVec2((m_viewportSize.x - size.x) / 2.0f,
@@ -146,7 +154,7 @@ void Window::onDestroy() {
 }
 
 void Window::checkCollisions() {
-  // Check collision between ship and asteroids
+  // Verificando colisão entre a bola e os espinhos
   for (auto const &spike : m_spikes.m_spikes) {
     auto const spikeTranslation{spike.m_translation};
     auto const distance{glm::distance(m_ball.m_translation, spikeTranslation)};
@@ -156,6 +164,4 @@ void Window::checkCollisions() {
       m_restartWaitTimer.restart();
     }
   }
-
-  // m_spikes.m_spikes.remove_if([](auto const &a) { return a.m_hit; });
 }

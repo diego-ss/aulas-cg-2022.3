@@ -17,22 +17,21 @@ public:
   void update(const Ball &ball, GameData &gameData, float deltaTime);
 
   struct Spike {
-    GLuint m_VAO{};
-    GLuint m_VBO{};
+    GLuint m_VAO{}; // VAO
+    GLuint m_VBO{}; // VBO
 
-    glm::vec4 m_color{1};
-    bool m_hit{};
-    int m_polygonSides{};
-    float m_rotation{1.6f};
-    float m_scale{};
-    glm::vec2 m_translation{};
+    glm::vec4 m_color{1};      // COR
+    int m_polygonSides{3};     // LADOS DO POLÍGONO DO ESPINHO
+    float m_rotation{1.6f};    // ROTAÇÃO
+    float m_scale{0.06f};      // ESCALA
+    glm::vec2 m_translation{}; // TRANSLAÇÃO
   };
 
-  std::list<Spike> m_spikes;
-  int maxQtdTopSpikes{0};
-  int qtdTopSpikes{0};
+  std::list<Spike> m_spikes; // LISTA DE ESPINHOS
+  int maxQtdTopSpikes{0};    // QTD MÁXIMA DE ESPINHOS EM CIMA
+  int qtdTopSpikes{0};       // QTD DE ESPINHOS EM CIMA
 
-  Spike makeSpike(glm::vec2 translation = {}, float scale = 0.06f);
+  Spike makeSpike();
   void randomizeTopSpikes(Spike &spike);
 
 private:
