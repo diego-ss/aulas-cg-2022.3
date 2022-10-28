@@ -284,7 +284,7 @@ void Window::calculate() {
 
 ### Resultado Final
 <p align="center">
-    <img src="https://user-images.githubusercontent.com/55899445/194710962-51332d27-a383-4e27-aa58-99d1d52cf3b8.gif"/>
+    <img alt="gif roll a ball" src="https://user-images.githubusercontent.com/55899445/198696680-c425a09f-5b33-4359-84a7-f06c1d6af755.gif"/>
 </p>
 
 
