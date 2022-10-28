@@ -1,7 +1,7 @@
 <h1 align="center">Diego Sousa Santos - 11044616</h1>
 
 <p align="center">
-    <img  src="https://user-images.githubusercontent.com/55899445/194708500-d6d7288c-7e47-44f4-b2e0-af67640d99d9.png" width="150" height="150"/>
+  <img  src="https://user-images.githubusercontent.com/55899445/194708500-d6d7288c-7e47-44f4-b2e0-af67640d99d9.png" width="150" height="150"/>
 </p>
 
 # ABCg
@@ -212,10 +212,10 @@ void Window::calculate() {
   <summary>EXPANDIR PARA VISUALIZAR</summary>
 
 <p align="center">
-    <img width="456" alt="rollaballImage" src="https://user-images.githubusercontent.com/55899445/194708704-9e639cb6-2a07-48f9-84ef-48868aa4f470.PNG">
+    <img width="456" alt="rollaballImage" src="https://user-images.githubusercontent.com/55899445/198695644-ec553618-34cb-4b7b-8207-4572cc3d21d8.png">
 </p>
 
--   Link GitHub Pages: [RollABall](https://diego-ss.github.io/cg-2022.3-UFABC/simpleCalculator/)
+-   Link GitHub Pages: [RollABall](https://diego-ss.github.io/cg-2022.3-UFABC/rollaball/)
 
 ### Descrição geral
 
