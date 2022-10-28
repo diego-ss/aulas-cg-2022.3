@@ -20,7 +20,9 @@ ABCg is a lightweight C++ framework that simplifies the development of 3D graphi
 
 * * *
 
-## Atividade 01 - SimpleCalculator
+### Atividade 01 - SimpleCalculator
+<details>
+  <summary>EXPANDIR PARA VISUALIZAR</summary>
 
 <p align="center">
     <img width="456" alt="simpleCalculatorIMG" src="https://user-images.githubusercontent.com/55899445/194708704-9e639cb6-2a07-48f9-84ef-48868aa4f470.PNG">
@@ -203,6 +205,91 @@ void Window::calculate() {
 
 
 * * *
+</details>
+
+### Atividade 02 - Roll a Ball
+<details>
+  <summary>EXPANDIR PARA VISUALIZAR</summary>
+
+<p align="center">
+    <img width="456" alt="rollaballImage" src="https://user-images.githubusercontent.com/55899445/194708704-9e639cb6-2a07-48f9-84ef-48868aa4f470.PNG">
+</p>
+
+-   Link GitHub Pages: [RollABall](https://diego-ss.github.io/cg-2022.3-UFABC/simpleCalculator/)
+
+### Descrição geral
+
+
+### Detalhes da implementação
+
+#### Assets
+-   Como assets auxiliares, foi utilizada a fonte Inconsolata-Medium como no projeto TicTacToe.
+#### main.cpp
+-   No arquivo main foi utilizada a implementação padrão que vimos em aula.
+#### window.hpp
+-   Para a definição da classe Window, foram sobrescritos dois métodos da classe OpenGLWindow (da qual Window tem herança): onCreate e onPaintUI.
+```cpp
+
+```
+-   Além disso, foram definidas as seguintes variáveis e métodos auxiliares para o processamento:
+```cpp
+
+```
+#### window.cpp
+-   Neste arquivo foram implementados os métodos sobrescritos e os novos definidos na classe Window, do arquivo window.hpp.
+-   A ideia da composição da janela foi considerar uma tabela com seis linhas, todas com uma coluna apenas: 
+    -  a primeira contém um input para que o usuário digite o primeiro número da operação.
+    -  a segunda contém um combobox com as operações disponíveis. 
+    -  a terceira contém um input para que o usuário digite o segunda número da operação.
+    -  a quarta contém um botão que confirma a realização da operação.
+    -  a quinta contém uma label que exibe o resultado da operação matemática.
+    -  a sexta contém um botão responsável por limpar os operadores e o resultado.
+-   No método onCreate é ralizado o import da fonte de texto e zerados os operadores.
+```cpp
+
+```
+-   No método clear, é realizada a limpeza dos operadores e do resultado.
+```cpp
+
+```
+-   No método calculate, é realizada a operação com base nos parâmetros informados pelo usuário.
+```cpp
+
+```
+-   No método onPaintUI é onde está sendo realizada toda definição dos elementos de UI da tela da calculadora.
+-   Para isso, dentro dele foram definidas as seguintes variáveis:
+```cpp
+
+```
+-   Após isso é iniciada a tabela e definida cada uma de suas linhas. 
+```cpp
+
+```
+```cpp
+
+```
+```cpp
+
+```
+```cpp
+
+```
+```cpp
+
+```
+```cpp
+
+```
+-   Para compilação web, foi utilizado o arquivo html do tictactoe adapatado para esta aplicação.
+
+### Resultado Final
+<p align="center">
+    <img src="https://user-images.githubusercontent.com/55899445/194710962-51332d27-a383-4e27-aa58-99d1d52cf3b8.gif"/>
+</p>
+
+
+* * *
+</details>
 
 
 ## License
