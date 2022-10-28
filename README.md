@@ -219,36 +219,95 @@ void Window::calculate() {
 
 ### Descrição geral
 
+-   O propósito da aplicação é ser um jogo 2D cujo desenvolvimento e funcionalidades utilizem dos conceitos vistos em aula relacionados à gráficos 2D com primitivas do OpenGL, utilizando a biblioteca ABCg e renderização dos gráficos usando shaders.
+-   As primitivas utilizadas resumem-se em triângulos, utilizados de forma singular para formar os espinhos e em conjunto para formar a bola.
+-   O objetivo do jogo é conseguir o máximo de pontos, desviando dos espinhos ao decorrer do tempo. 
+-   A bola se movimenta sozinha, e é possível utilizar a <b>seta para cima</b> para pular e a <b>barra de espaço</b> para acelerar.
+-   Se a bola tocar em um dos espinhos, a partida termina e o jogo é reiniciado.
 
 ### Detalhes da implementação
 
 #### Assets
--   Como assets auxiliares, foi utilizada a fonte Inconsolata-Medium como no projeto TicTacToe.
+-   Como assets auxiliares, foi utilizada a fonte Inconsolata-Medium como no projeto TicTacToe e no SimpleCalculator.
 #### main.cpp
--   No arquivo main foi utilizada a implementação padrão que vimos em aula.
-#### window.hpp
--   Para a definição da classe Window, foram sobrescritos dois métodos da classe OpenGLWindow (da qual Window tem herança): onCreate e onPaintUI.
+-   No arquivo main foi utilizada a implementação padrão que vimos em aula, removendo os  FPS, botão de tela cheia e utilizando 4 samples.
+#### gamedata.hpp
+-   Classe responsável por armazenar status e informações relevantes para as regras e funcionalidades do jogo.
+-   Para sua definição, foram definidas as seguintes propriedades:
 ```cpp
-
+  enum class Input { Up, Space }; // definição de enum para classificar os inputs possíveis
+  enum class State { Playing, GameOver }; // definição de enum para classificar os status de jogo possíveis
+  
+  // struct para armazenar os dados do jogo
+  struct GameData {
+    State m_state{State::Playing}; // ESTADO DO JOGO
+    std::bitset<2> m_input;        // ARRAAY DOS INPUTS
+    int m_score;                   // PONTUAÇÃO
+  };
+```
+#### window.hpp
+-   Para a definição da classe Window, foram sobrescritos sete métodos da classe OpenGLWindow (da qual Window tem herança):
+```cpp
+  void onEvent(SDL_Event const &event) override; // PARA CAPTURAR EVENTOS DO TECLADO
+  void onCreate() override; // AÇÕES AO CRIAR A APLICAÇÃO
+  void onUpdate() override; // AÇÕES AO ATUALIZAR A JANELA
+  void onPaint() override; // AÇÕES AO RENDERIZAR A JANELA
+  void onPaintUI() override; // AÇÕES DE UI
+  void onResize(glm::ivec2 const &size) override; // AÇÕES AO REDIMENSIONAR A JANELA
+  void onDestroy() override; // AÇÕES AO DESTRUIR A JANELA
 ```
 -   Além disso, foram definidas as seguintes variáveis e métodos auxiliares para o processamento:
 ```cpp
+  glm::ivec2 m_viewportSize{}; // DIMENSÕES DA JANELA
+  GLuint m_objectsProgram{}; // OBJECTS PROGRAM
+  GameData m_gameData; // GAME DATA REF
+  Ball m_ball; // BALL REF
+  Spikes m_spikes; // SPIKES REF
+  abcg::Timer m_restartWaitTimer; // TEMPORIZADOR
+  ImFont *m_font{}; // FONTE
+  std::default_random_engine m_randomEngine; // RANDOMIZADOR
 
+  void restart(); // PARA REINICIAR AS CONDIÇÕES DE JOGO
+  void checkCollisions(); // PARA VERIFICAR COLISÕES
 ```
 #### window.cpp
 -   Neste arquivo foram implementados os métodos sobrescritos e os novos definidos na classe Window, do arquivo window.hpp.
--   A ideia da composição da janela foi considerar uma tabela com seis linhas, todas com uma coluna apenas: 
-    -  a primeira contém um input para que o usuário digite o primeiro número da operação.
-    -  a segunda contém um combobox com as operações disponíveis. 
-    -  a terceira contém um input para que o usuário digite o segunda número da operação.
-    -  a quarta contém um botão que confirma a realização da operação.
-    -  a quinta contém uma label que exibe o resultado da operação matemática.
-    -  a sexta contém um botão responsável por limpar os operadores e o resultado.
--   No método onCreate é ralizado o import da fonte de texto e zerados os operadores.
-```cpp
+-   A ideia da composição da janela foi considerar o jogo e seus elementos renderizando e também dois elementos de UI: 
+    -  um texto para contabilizar o Score.
+    -  um texto que é exibido quando o jogo é finalizado. 
+-   Os eventos capiturados são para as teclas SPACE, UP, W e para os botões do mouse.
 
+- No método <b>OnEvent</b> são capturadas as interações do usuário com a interface:
+```cpp
+// Eventos do teclado
+  if (event.type == SDL_KEYDOWN) {
+    if (event.key.keysym.sym == SDLK_SPACE) // Capturando DOWN da barra de espaço
+      m_gameData.m_input.set(gsl::narrow<size_t>(Input::Space)); // Setando o vetor de inputs do GameData
+    if (event.key.keysym.sym == SDLK_UP || event.key.keysym.sym == SDLK_w) // capturando DOWN do w e seta 
+      m_gameData.m_input.set(gsl::narrow<size_t>(Input::Up)); // Setando o vetor de inputs do GameData
+  }
+  if (event.type == SDL_KEYUP) {
+    if (event.key.keysym.sym == SDLK_SPACE) // Capturando UP barra de espaço
+      m_gameData.m_input.reset(gsl::narrow<size_t>(Input::Space)); // Setando o vetor de inputs do GameData
+    if (event.key.keysym.sym == SDLK_UP || event.key.keysym.sym == SDLK_w) // capturando DOWN do w e seta 
+      m_gameData.m_input.reset(gsl::narrow<size_t>(Input::Up)); // Setando o vetor de inputs do GameData
+  }
+
+  // Eventos do mouse
+  if (event.type == SDL_MOUSEBUTTONDOWN) {
+    if (event.button.button == SDL_BUTTON_LEFT)
+      m_gameData.m_input.set(gsl::narrow<size_t>(Input::Space));
+    if (event.button.button == SDL_BUTTON_RIGHT)
+      m_gameData.m_input.set(gsl::narrow<size_t>(Input::Up));
+  }
+  if (event.type == SDL_MOUSEBUTTONUP) {
+    if (event.button.button == SDL_BUTTON_LEFT)
+      m_gameData.m_input.reset(gsl::narrow<size_t>(Input::Space));
+    if (event.button.button == SDL_BUTTON_RIGHT)
+      m_gameData.m_input.reset(gsl::narrow<size_t>(Input::Up));
+  }
 ```
--   No método clear, é realizada a limpeza dos operadores e do resultado.
+- No método <b>OnCreate</b> são realizadas as operações necessárias ao inicializar o ambiente, c:
 ```cpp
 
 ```
