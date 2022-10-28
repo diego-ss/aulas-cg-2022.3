@@ -23,14 +23,17 @@ public:
     glm::vec4 m_color{1};
     bool m_hit{};
     int m_polygonSides{};
-    float m_rotation{};
+    float m_rotation{1.6f};
     float m_scale{};
     glm::vec2 m_translation{};
   };
 
   std::list<Spike> m_spikes;
+  int maxQtdTopSpikes{0};
+  int qtdTopSpikes{0};
 
   Spike makeSpike(glm::vec2 translation = {}, float scale = 0.06f);
+  void randomizeTopSpikes(Spike &spike);
 
 private:
   GLuint m_program{};

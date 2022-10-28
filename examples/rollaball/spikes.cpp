@@ -20,12 +20,30 @@ void Spikes::create(GLuint program, int quantity) {
   m_spikes.clear();
   m_spikes.resize(quantity);
 
-  float i{0.0f};
-  for (auto &spike : m_spikes) {
-    spike = makeSpike();
-    spike.m_translation = {1.0f + i, -0.01f};
+  float i{0.0f}; // ACUMULADOR PARA SEPARAR OS ESPINHOS NO COMEÇO
+  maxQtdTopSpikes = (quantity / 2) - 1; // LIMITANDO ESPINHOS NO TOPO
+  qtdTopSpikes = 0;                     // CONTANDO ESPINHOS NO TOPO
 
+  for (auto &spike : m_spikes) {
+    spike = makeSpike(); // CRIANDO ESPINHO
+    // iniciando o espinho no canto direito e um pouco abaixo
+    spike.m_translation = {1.0f + i, -0.05f};
+    randomizeTopSpikes(spike);
     i += 0.2f;
+  }
+}
+
+void Spikes::randomizeTopSpikes(Spike &spike) {
+  // gerando espinhos no topo aleatoriamente
+  if (qtdTopSpikes < maxQtdTopSpikes) {
+    std::uniform_real_distribution<float> randomDists(0.0f, 1.0f);
+    auto &re{m_randomEngine};
+    // randomicamente coloca o espinho no topo e gira ele
+    if (randomDists(re) >= 0.5f) {
+      spike.m_translation.y = 0.65f;
+      spike.m_rotation = -1.6f;
+      qtdTopSpikes++;
+    }
   }
 }
 
@@ -59,17 +77,19 @@ void Spikes::destroy() {
 
 void Spikes::update(const Ball &ball, GameData &gameData, float deltaTime) {
   for (auto &spike : m_spikes) {
-    // spike.m_translation.x -= ball.m_velocity.x * deltaTime * 10.0f;
-    //      glm::wrapAngle(spike.m_rotation + spike.m_angularVelocity *
-    //      deltaTime);
+    // condicionando a translação à velocidade da bola
     spike.m_translation.x -= ball.m_velocity.x * deltaTime;
 
+    // reposicionando quando chega no fim da tela
     if (spike.m_translation.x < -1.0f) {
+      // calculando uma distância randômica do ponto de origem para separar os
+      // espinhos
       std::uniform_real_distribution<float> randomDists(0.0f, 0.9f);
       auto &re{m_randomEngine};
       float randomDist = randomDists(re) + 2.0f;
       spike.m_translation.x += randomDist;
 
+      // aumentando Score
       if (gameData.m_state == State::Playing)
         gameData.m_score += 1;
     }

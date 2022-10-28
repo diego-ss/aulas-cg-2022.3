@@ -18,49 +18,25 @@ void Ball::create(GLuint program) {
   m_rotation = 0.0f;
   m_translation = glm::vec2(-0.7f, 0.0f);
 
-  // clang-format off
-  std::array positions{
-      // ball body
-      glm::vec2{-02.5f, +12.5f}, glm::vec2{-15.5f, +02.5f},
-      glm::vec2{-15.5f, -12.5f}, glm::vec2{-09.5f, -07.5f},
-      glm::vec2{-03.5f, -12.5f}, glm::vec2{+03.5f, -12.5f},
-      glm::vec2{+09.5f, -07.5f}, glm::vec2{+15.5f, -12.5f},
-      glm::vec2{+15.5f, +02.5f}, glm::vec2{+02.5f, +12.5f},
+  // Get location of attributes in the program
+  auto const positionAttribute{
+      abcg::glGetAttribLocation(m_program, "inPosition")};
 
-      };
-
-  // Normalize
-  for (auto &position : positions) {
-    position /= glm::vec2{15.5f, 15.5f};
+  // Create geometry data
+  auto const sides{10};
+  std::vector<glm::vec2> positions{{0, 0}};
+  auto const step{M_PI * 2 / sides};
+  for (auto const angle : iter::range(0.0, M_PI * 2, step)) {
+    positions.emplace_back(std::cos(angle), std::sin(angle));
   }
+  positions.push_back(positions.at(1));
 
-  std::array const indices{0, 1, 3,
-                           1, 2, 3,
-                           0, 3, 4,
-                           0, 4, 5,
-                           9, 0, 5,
-                           9, 5, 6,
-                           9, 6, 8,
-                           8, 6, 7
-  };
-  // clang-format on                           
-
-  // Generate VBO
+  // Generate VBO of positions
   abcg::glGenBuffers(1, &m_VBO);
   abcg::glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
-  abcg::glBufferData(GL_ARRAY_BUFFER, sizeof(positions), positions.data(),
-                     GL_STATIC_DRAW);
+  abcg::glBufferData(GL_ARRAY_BUFFER, positions.size() * sizeof(glm::vec2),
+                     positions.data(), GL_STATIC_DRAW);
   abcg::glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-  // Generate EBO
-  abcg::glGenBuffers(1, &m_EBO);
-  abcg::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO);
-  abcg::glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices.data(),
-                     GL_STATIC_DRAW);
-  abcg::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-  // Get location of attributes in the program
-  GLint positionAttribute{abcg::glGetAttribLocation(m_program, "inPosition")};
 
   // Create VAO
   abcg::glGenVertexArrays(1, &m_VAO);
@@ -74,25 +50,23 @@ void Ball::create(GLuint program) {
                               nullptr);
   abcg::glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-  abcg::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO);
-
   // End of binding to current VAO
   abcg::glBindVertexArray(0);
 }
 
 void Ball::paint(const GameData &gameData) {
-  if (gameData.m_state != State::Playing) return;
+  if (gameData.m_state != State::Playing)
+    return;
 
   abcg::glUseProgram(m_program);
 
   abcg::glBindVertexArray(m_VAO);
-
+  abcg::glUniform4fv(m_colorLoc, 1, &m_color.r);
   abcg::glUniform1f(m_scaleLoc, m_scale);
   abcg::glUniform1f(m_rotationLoc, m_rotation);
   abcg::glUniform2fv(m_translationLoc, 1, &m_translation.x);
 
-  abcg::glUniform4fv(m_colorLoc, 1, &m_color.r);
-  abcg::glDrawElements(GL_TRIANGLES, 12 * 3, GL_UNSIGNED_INT, nullptr);
+  abcg::glDrawArrays(GL_TRIANGLE_FAN, 0, 12);
 
   abcg::glBindVertexArray(0);
 
@@ -112,39 +86,40 @@ void Ball::update(GameData const &gameData, float deltaTime) {
   // Detecção de pulo
   if (gameData.m_input[gsl::narrow<size_t>(Input::Up)] &&
       gameData.m_state == State::Playing && !isJumping && !isFallingDown) {
-    // Thrust in the forward vector
-    // auto const forward{glm::rotate(glm::vec2{0.0f, 1.0f}, m_rotation)};
-    // m_velocity += forward * deltaTime;
 
     isJumping = true;
   }
 
   // Detecção de boost
-  if(gameData.m_input[gsl::narrow<size_t>(Input::Space)] && !isBoosted){
+  if (gameData.m_input[gsl::narrow<size_t>(Input::Space)] && !isBoosted) {
     m_velocity += m_velocityBoost;
     isBoosted = true;
-  } else if(m_velocity.x > 1.0f) {
+  } else if (m_velocity.x > 1.0f) {
     m_velocity -= m_velocityBoost;
     isBoosted = false;
   }
 
   // Aplicando pulo
-  if (isJumping && m_translation.y < m_maxTranslationY){
+  if (isJumping && m_translation.y < m_maxTranslationY) {
     auto const jumpVector = glm::vec2{0.0f, m_jumpForce};
-    m_translation.y = std::clamp((m_translation + jumpVector * deltaTime * 2.0f).y, m_translation.y, m_maxTranslationY);
-  } 
+    m_translation.y =
+        std::clamp((m_translation + jumpVector * deltaTime * 2.0f).y,
+                   m_translation.y, m_maxTranslationY);
+  }
 
   // Detectando queda
-  if (m_translation.y == m_maxTranslationY){
+  if (m_translation.y == m_maxTranslationY) {
     isFallingDown = true;
     isJumping = false;
-  } else if(m_translation.y == 0){
+  } else if (m_translation.y == 0) {
     isFallingDown = false;
   }
 
   // Aplicando queda
-  if (isFallingDown && m_translation.y > m_minTranslationY){
+  if (isFallingDown && m_translation.y > m_minTranslationY) {
     auto const fallVector = glm::vec2{0.0f, m_fallForce};
-    m_translation.y = std::clamp((m_translation + fallVector * deltaTime * 2.0f).y, m_minTranslationY, m_translation.y);
+    m_translation.y =
+        std::clamp((m_translation + fallVector * deltaTime * 2.0f).y,
+                   m_minTranslationY, m_translation.y);
   }
 }
