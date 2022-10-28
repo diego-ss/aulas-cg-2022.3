@@ -11,11 +11,11 @@ public:
   void destroy();
   void update(GameData const &gameData, float deltaTime);
 
-  glm::vec4 m_color{1};
-  float m_rotation{};
-  float m_scale{0.125f};
-  glm::vec2 m_translation{};
-  glm::vec2 m_velocity{1.0f, 0.0f};
+  glm::vec4 m_color{1};             // COR
+  float m_rotation{};               // ROTAÇÃO
+  float m_scale{0.125f};            // ESCALA
+  glm::vec2 m_translation{};        // TRANSLAÇÃO
+  glm::vec2 m_velocity{1.0f, 0.0f}; // VELOCIDADE
 
   bool isJumping{false};       // INDICADOR DE PULO
   bool isFallingDown{false};   // INDICADOR DE QUEDA
