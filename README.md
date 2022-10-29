@@ -318,10 +318,7 @@ void Window::calculate() {
 
   // Criando programa para renderizar objetos
   m_objectsProgram =
-      abcg::createOpenGLProgram({{.source = assetsPath + "objects.vert",
-                                  .stage = abcg::ShaderStage::Vertex},
-                                 {.source = assetsPath + "objects.frag",
-                                  .stage = abcg::ShaderStage::Fragment}});
+      abcg::createOpenGLProgram(//Suprimido pois o README não suporta);
 
   // limpando tela com a cor preta
   abcg::glClearColor(0, 0, 0, 1);
