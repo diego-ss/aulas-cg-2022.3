@@ -229,6 +229,45 @@ void Window::calculate() {
 
 #### Assets
 -   Como assets auxiliares, foi utilizada a fonte Inconsolata-Medium como no projeto TicTacToe e no SimpleCalculator.
+###  objects.vert
+-   Shader utilizado na renderização da bola e dos espinhos. Os vértices possuem o atributo inPosition que represente a posição x,y do vértice.
+```cpp
+#version 300 es
+
+layout(location = 0) in vec2 inPosition;
+
+uniform vec4 color; // COR RGBA UNIFORME
+uniform float rotation; // ROTAÇÃO UNIFORME
+uniform float scale; // ESCALA UNIFORME
+uniform vec2 translation; // TRANSLAÇÃO UNIFORME
+
+out vec4 fragColor;
+
+void main() {
+  float sinAngle = sin(rotation);
+  float cosAngle = cos(rotation);
+  vec2 rotated = vec2(inPosition.x * cosAngle - inPosition.y * sinAngle,
+                      inPosition.x * sinAngle + inPosition.y * cosAngle);
+
+  vec2 newPosition = rotated * scale + translation; // NOVA POSIÇÃO ROTATED
+  gl_Position = vec4(newPosition, 0, 1);
+  fragColor = color;
+}
+```
+###  objects.frag
+-   Fragment shader responsável pelo processamento de pixels na GPU. Foi definido como abaixo, apenas redirecionando as cores de saída.
+```cpp
+#version 300 es
+
+precision mediump float;
+
+in vec4 fragColor;
+
+out vec4 outColor;
+
+void main() { outColor = fragColor; }
+```
+
 #### main.cpp
 -   No arquivo main foi utilizada a implementação padrão que vimos em aula, removendo os  FPS, botão de tela cheia e utilizando 4 samples.
 #### gamedata.hpp
