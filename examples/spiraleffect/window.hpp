@@ -27,17 +27,24 @@ private:
     glm::vec3 m_rotationAxis{};
   };
 
-  std::array<Star, 500> m_stars;
+  std::array<Star, 500> m_objects;
 
   float m_angle{};
 
   glm::mat4 m_viewMatrix{1.0f};
   glm::mat4 m_projMatrix{1.0f};
   float m_FOV{30.0f};
+  float m_cameraAt_x{0.0f};
+  float m_cameraAt_y{0.0f};
+  float m_cameraAt_z{-1.0f};
 
+  float m_spiralRadius{3.0f};
+  float m_spiralStep{m_spiralRadius / m_objects.size()};
+  float m_TwoPI{M_PI * 2.0f};
   GLuint m_program{};
 
-  void randomizeStar(Star &star, int index);
+  void generateSpiral();
+  void orientCamera(glm::vec3 const at);
 };
 
 #endif
