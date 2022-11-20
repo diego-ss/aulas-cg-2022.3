@@ -103,7 +103,7 @@ void Window::onPaint() {
 
   // renderizando cubos
   for (auto &star : m_objects) {
-    // model matrix
+    // aplicando as transformações lineares -> rotação -> escala -> translação
     glm::mat4 modelMatrix{1.0f};
     modelMatrix = glm::translate(modelMatrix, star.m_position);
     modelMatrix = glm::scale(modelMatrix, glm::vec3(0.1f));
