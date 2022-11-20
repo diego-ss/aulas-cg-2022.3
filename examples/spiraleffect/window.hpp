@@ -37,11 +37,6 @@ private:
   glm::mat4 m_projMatrix{1.0f};
   float m_FOV{30.0f};
 
-  // referência da câmera look at
-  float m_cameraAt_x{0.0f};
-  float m_cameraAt_y{0.0f};
-  float m_cameraAt_z{-1.0f};
-
   float m_spiralRadius{3.0f}; // RAIO DO ESPIRAL
   float m_spiralStep{
       m_spiralRadius /
