@@ -749,7 +749,7 @@ for (auto &spike : m_spikes) {
     <img width="456" alt="SpiralEffectScreenshot" src="https://user-images.githubusercontent.com/55899445/202917321-6f1ab8a8-37ed-4da2-9caa-589d830e81cd.PNG">
 </p>
 
--   Link GitHub Pages: [SpiralEffect](https://diego-ss.github.io/cg-2022.3-UFABC/spiralleffect/)
+-   Link GitHub Pages: [SpiralEffect](https://diego-ss.github.io/cg-2022.3-UFABC/spiraleffect/)
 
 ### Descrição geral
 
@@ -849,7 +849,7 @@ void main() { outColor = fragColor; }
   abcg::glClearColor(0, 0, 0, 1);
   abcg::glEnable(GL_DEPTH_TEST);
   
-  // caracteres { suprimidos por erro de build
+  // caracteres { duplos suprimidos por erro de build
   m_program =
       abcg::createOpenGLProgram(.source = assetsPath + "depth.vert",
                                   .stage = abcg::ShaderStage::Vertex},
@@ -1028,7 +1028,7 @@ abcg::OpenGLWindow::onPaintUI();
 
 ### Resultado Final
 <p align="center">
-    <img alt="gif spirtal effect" src="https://user-images.githubusercontent.com/55899445/202920443-ca3d11d5-d9c5-4e99-8041-49b2a468fd32.gif"/>
+    <img alt="gif spiral effect" src="https://user-images.githubusercontent.com/55899445/202920443-ca3d11d5-d9c5-4e99-8041-49b2a468fd32.gif"/>
 </p>
 
 * * *
