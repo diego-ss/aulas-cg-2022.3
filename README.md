@@ -848,12 +848,13 @@ void main() { outColor = fragColor; }
 
   abcg::glClearColor(0, 0, 0, 1);
   abcg::glEnable(GL_DEPTH_TEST);
-
+  
+  // caracteres { suprimidos por erro de build
   m_program =
-      abcg::createOpenGLProgram({{.source = assetsPath + "depth.vert",
+      abcg::createOpenGLProgram(.source = assetsPath + "depth.vert",
                                   .stage = abcg::ShaderStage::Vertex},
                                  {.source = assetsPath + "depth.frag",
-                                  .stage = abcg::ShaderStage::Fragment}});
+                                  .stage = abcg::ShaderStage::Fragment);
 
   m_model.loadObj(assetsPath + "box.obj");
   m_model.setupVAO(m_program);
