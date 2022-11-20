@@ -69,7 +69,7 @@ void Window::onUpdate() {
     // incrementando z em 15 unidades por segundo
     objRef.m_position.z += deltaTime * 15.0f;
 
-    // resetando posição da estrela quando chega em z = -20
+    // resetando posição do cubo quando chega em z = -20
     if (objRef.m_position.z > -20.0f) {
       // orientando câmera para olhar para os cubos mais próximos
       orientCamera(
@@ -102,12 +102,12 @@ void Window::onPaint() {
   abcg::glUniform4f(colorLoc, 1.0f, 1.0f, 1.0f, 1.0f); // White
 
   // renderizando cubos
-  for (auto &star : m_objects) {
+  for (auto &objRef : m_objects) {
     // aplicando as transformações lineares -> rotação -> escala -> translação
     glm::mat4 modelMatrix{1.0f};
-    modelMatrix = glm::translate(modelMatrix, star.m_position);
+    modelMatrix = glm::translate(modelMatrix, objRef.m_position);
     modelMatrix = glm::scale(modelMatrix, glm::vec3(0.1f));
-    modelMatrix = glm::rotate(modelMatrix, m_angle, star.m_rotationAxis);
+    modelMatrix = glm::rotate(modelMatrix, m_angle, objRef.m_rotationAxis);
 
     // variável uniforme
     abcg::glUniformMatrix4fv(modelMatrixLoc, 1, GL_FALSE, &modelMatrix[0][0]);
