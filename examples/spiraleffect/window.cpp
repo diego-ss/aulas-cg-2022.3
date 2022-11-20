@@ -73,10 +73,10 @@ void Window::onUpdate() {
     if (objRef.m_position.z > -20.0f) {
       // orientando câmera para olhar para os cubos mais próximos
       orientCamera(
-          {objRef.m_position.x / 100.0f, objRef.m_position.y / 100.0f, -1.0f});
+          {objRef.m_position.x / 80.0f, objRef.m_position.y / 80.0f, -1.0f});
 
       // voltando para o fundo da tela
-      objRef.m_position.z = -200.0f;
+      objRef.m_position.z = -100.0f;
     }
     index++;
   }
