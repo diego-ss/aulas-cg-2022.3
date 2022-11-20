@@ -912,6 +912,7 @@ void main() { outColor = fragColor; }
     // resetando posição da estrela quando chega em z = -20
     if (objRef.m_position.z > -20.0f) {
       // orientando câmera para olhar para os cubos mais próximos
+      // valores empíricos
       orientCamera(
           {objRef.m_position.x / 80.0f, objRef.m_position.y / 80.0f, -1.0f});
 
