@@ -18,55 +18,65 @@ void Window::onCreate() {
   m_model.loadObj(assetsPath + "box.obj");
   m_model.setupVAO(m_program);
 
+  // orientando câmera para olhar para z = -1.0f
   orientCamera({0.0f, 0.0f, -1.0f});
   generateSpiral();
 }
 
 void Window::orientCamera(glm::vec3 const at) {
-  // Camera at (0,0,0) and looking towards the negative z
+  // a câmera é fixa na posição 0,0,0 e a direção
+  // em que ela olha varia de acordo com o vetor at
+  // enviado como parâmetro
   glm::vec3 const eye{0.0f, 0.0f, 0.0f};
   glm::vec3 const up{0.0f, 1.0f, 0.0f};
   m_viewMatrix = glm::lookAt(eye, at, up);
 }
 
+// gera espiral de cubos
 void Window::generateSpiral() {
-
+  // variáveis auxiliaxes
   auto num_objects = m_objects.size();
   auto increment = m_TwoPI / num_objects;
   auto angle = 0.0f;
   auto x = 0.0f, y = 5.0f;
 
-  for (auto &star : m_objects) {
-    star.m_position =
+  // para cada cubo, é gerada uma posição com base na equação para geração do
+  // espiral ao mesmo tempo em que z é decrementado para criar a sensação de
+  // profundidade
+  for (auto &objRef : m_objects) {
+    objRef.m_position =
         glm::vec3(m_spiralRadius * cos(angle) + x,
-                  m_spiralRadius * sin(angle) * y, -angle * 30.0f);
+                  m_spiralRadius * sin(angle) * y, -angle * 15.0f);
 
-    star.m_rotationAxis = glm::sphericalRand(1.0f);
+    // rotacionando cubos
+    objRef.m_rotationAxis = glm::sphericalRand(1.0f);
 
+    // incrementando angulo para geração do espiral
     angle += increment;
+    // diminuindo raio do espiral
     m_spiralRadius -= m_spiralStep;
   }
 }
 
 void Window::onUpdate() {
-  // Increase angle by 90 degrees per second
+  // incrementando angulo em 90 graus por segundo
   auto const deltaTime{gsl::narrow_cast<float>(getDeltaTime())};
   m_angle = glm::wrapAngle(m_angle + glm::radians(90.0f) * deltaTime);
 
   int index{0};
-  // Update stars
-  for (auto &star : m_objects) {
-    // Increase z by 10 units per second
-    star.m_position.z += deltaTime * 15.0f;
+  // atualizando objetos
+  for (auto &objRef : m_objects) {
+    // incrementando z em 15 unidades por segundo
+    objRef.m_position.z += deltaTime * 15.0f;
 
-    // If this star is behind the camera, select a new random position &
-    // orientation and move it back to -100
-    if (star.m_position.z > -20.0f) {
+    // resetando posição da estrela quando chega em z = -20
+    if (objRef.m_position.z > -20.0f) {
+      // orientando câmera para olhar para os cubos mais próximos
       orientCamera(
-          {star.m_position.x / 100.0f, star.m_position.y / 100.0f, -1.0f});
+          {objRef.m_position.x / 100.0f, objRef.m_position.y / 100.0f, -1.0f});
 
-      // Back to -100
-      star.m_position.z = -200.0f;
+      // voltando para o fundo da tela
+      objRef.m_position.z = -200.0f;
     }
     index++;
   }
@@ -79,27 +89,27 @@ void Window::onPaint() {
 
   abcg::glUseProgram(m_program);
 
-  // Get location of uniform variables
+  // capturando as variáveis uniformes
   auto const viewMatrixLoc{abcg::glGetUniformLocation(m_program, "viewMatrix")};
   auto const projMatrixLoc{abcg::glGetUniformLocation(m_program, "projMatrix")};
   auto const modelMatrixLoc{
       abcg::glGetUniformLocation(m_program, "modelMatrix")};
   auto const colorLoc{abcg::glGetUniformLocation(m_program, "color")};
 
-  // Set uniform variables that have the same value for every model
+  // setando as variáveis uniformes
   abcg::glUniformMatrix4fv(viewMatrixLoc, 1, GL_FALSE, &m_viewMatrix[0][0]);
   abcg::glUniformMatrix4fv(projMatrixLoc, 1, GL_FALSE, &m_projMatrix[0][0]);
   abcg::glUniform4f(colorLoc, 1.0f, 1.0f, 1.0f, 1.0f); // White
 
-  // Render each star
+  // renderizando cubos
   for (auto &star : m_objects) {
-    // Compute model matrix of the current star
+    // model matrix
     glm::mat4 modelMatrix{1.0f};
     modelMatrix = glm::translate(modelMatrix, star.m_position);
     modelMatrix = glm::scale(modelMatrix, glm::vec3(0.1f));
     modelMatrix = glm::rotate(modelMatrix, m_angle, star.m_rotationAxis);
 
-    // Set uniform variable
+    // variável uniforme
     abcg::glUniformMatrix4fv(modelMatrixLoc, 1, GL_FALSE, &modelMatrix[0][0]);
 
     m_model.render();
@@ -118,6 +128,8 @@ void Window::onPaintUI() {
     ImGui::Begin("Widget window", nullptr, ImGuiWindowFlags_NoDecoration);
 
     {
+      // a projeção foi mantida para que o efeito de espiral seja melhor
+      // visualizado
       ImGui::PushItemWidth(120);
       static std::size_t currentIndex{};
       std::vector<std::string> const comboItems{"Perspective", "Orthographic"};
