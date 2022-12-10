@@ -28,24 +28,23 @@ private:
   struct Star {
     glm::vec3 m_position{};
     glm::vec3 m_rotationAxis{};
+    float m_inital_x{};
   };
 
-  std::array<Star, 250> m_stars_left;
-  std::array<Star, 250> m_stars_right;
+  std::array<Star, 200> m_stars_left;
 
   float m_angle{};
 
   glm::mat4 m_viewMatrix{1.0f};
   glm::mat4 m_projMatrix{1.0f};
-  glm::vec3 m_eye{0.0f, 1.28f, 4.2f};
-  glm::vec3 m_at{0.0f, 0.3f, -1.0f};
-  glm::vec3 m_up{0.0f, 1.0f, -0.5f};
+  GLint m_colorLocation{};
 
   float m_FOV{30.0f};
+  float m_lerp_ref{0.0f};
 
   GLuint m_program{};
 
-  void randomizeStar(Star &star, float xPos);
+  void randomizeStar(Star &star);
 };
 
 #endif
