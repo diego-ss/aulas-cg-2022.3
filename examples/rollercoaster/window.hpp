@@ -4,6 +4,7 @@
 #include <random>
 
 #include "abcgOpenGL.hpp"
+#include "controller.hpp"
 #include "model.hpp"
 
 class Window : public abcg::OpenGLWindow {
@@ -14,6 +15,7 @@ protected:
   void onPaintUI() override;
   void onResize(glm::ivec2 const &size) override;
   void onDestroy() override;
+  void onEvent(SDL_Event const &event) override;
 
 private:
   std::default_random_engine m_randomEngine;
@@ -21,6 +23,7 @@ private:
   glm::ivec2 m_viewportSize{};
 
   Model m_model;
+  Controller m_controller;
 
   struct Star {
     glm::vec3 m_position{};

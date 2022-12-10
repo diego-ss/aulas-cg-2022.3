@@ -3,6 +3,32 @@
 #include <glm/gtc/random.hpp>
 #include <glm/gtx/fast_trigonometry.hpp>
 
+#include "window.hpp"
+
+void Window::onEvent(SDL_Event const &event) {
+  // Keyboard events
+  if (event.type == SDL_KEYDOWN) {
+    if (event.key.keysym.sym == SDLK_UP || event.key.keysym.sym == SDLK_w)
+      m_controller.m_input.set(gsl::narrow<size_t>(Input::Up));
+    if (event.key.keysym.sym == SDLK_DOWN || event.key.keysym.sym == SDLK_s)
+      m_controller.m_input.set(gsl::narrow<size_t>(Input::Down));
+    if (event.key.keysym.sym == SDLK_LEFT || event.key.keysym.sym == SDLK_a)
+      m_controller.m_input.set(gsl::narrow<size_t>(Input::Left));
+    if (event.key.keysym.sym == SDLK_RIGHT || event.key.keysym.sym == SDLK_d)
+      m_controller.m_input.set(gsl::narrow<size_t>(Input::Right));
+  }
+  if (event.type == SDL_KEYUP) {
+    if (event.key.keysym.sym == SDLK_UP || event.key.keysym.sym == SDLK_w)
+      m_controller.m_input.reset(gsl::narrow<size_t>(Input::Up));
+    if (event.key.keysym.sym == SDLK_DOWN || event.key.keysym.sym == SDLK_s)
+      m_controller.m_input.reset(gsl::narrow<size_t>(Input::Down));
+    if (event.key.keysym.sym == SDLK_LEFT || event.key.keysym.sym == SDLK_a)
+      m_controller.m_input.reset(gsl::narrow<size_t>(Input::Left));
+    if (event.key.keysym.sym == SDLK_RIGHT || event.key.keysym.sym == SDLK_d)
+      m_controller.m_input.reset(gsl::narrow<size_t>(Input::Right));
+  }
+}
+
 void Window::onCreate() {
   auto const assetsPath{abcg::Application::getAssetsPath()};
 
@@ -51,6 +77,9 @@ void Window::onUpdate() {
   m_angle = glm::wrapAngle(m_angle + glm::radians(90.0f) * deltaTime);
 
   m_viewMatrix = glm::lookAt(m_eye, m_at, m_up);
+
+  if (m_controller.m_input[static_cast<size_t>(Input::Up)]) {
+  }
 
   // Update stars
   float index{0};
@@ -125,7 +154,7 @@ void Window::onPaintUI() {
   abcg::OpenGLWindow::onPaintUI();
 
   {
-    auto const widgetSize{ImVec2(218, 300)};
+    auto const widgetSize{ImVec2(218, 62)};
     ImGui::SetNextWindowPos(ImVec2(m_viewportSize.x - widgetSize.x - 5, 5));
     ImGui::SetNextWindowSize(widgetSize);
     ImGui::Begin("Widget window", nullptr, ImGuiWindowFlags_NoDecoration);
@@ -164,41 +193,41 @@ void Window::onPaintUI() {
     }
 
     // temporário para análise do comportamento da câmera
-    ImGui::PushItemWidth(170);
-    ImGui::SliderFloat("at_x", &m_at.x, -1.0f, 1.0f, "%.2f degrees");
-    ImGui::PopItemWidth();
+    // ImGui::PushItemWidth(170);
+    // ImGui::SliderFloat("at_x", &m_at.x, -1.0f, 1.0f, "%.2f degrees");
+    // ImGui::PopItemWidth();
 
-    ImGui::PushItemWidth(170);
-    ImGui::SliderFloat("at_y", &m_at.y, -1.0f, 1.0f, "%.2f degrees");
-    ImGui::PopItemWidth();
+    // ImGui::PushItemWidth(170);
+    // ImGui::SliderFloat("at_y", &m_at.y, -1.0f, 1.0f, "%.2f degrees");
+    // ImGui::PopItemWidth();
 
-    ImGui::PushItemWidth(170);
-    ImGui::SliderFloat("at_z", &m_at.z, -1.0f, 1.0f, "%.2f degrees");
-    ImGui::PopItemWidth();
+    // ImGui::PushItemWidth(170);
+    // ImGui::SliderFloat("at_z", &m_at.z, -1.0f, 1.0f, "%.2f degrees");
+    // ImGui::PopItemWidth();
 
-    ImGui::PushItemWidth(170);
-    ImGui::SliderFloat("up_x", &m_up.x, -1.0f, 1.0f, "%.2f degrees");
-    ImGui::PopItemWidth();
+    // ImGui::PushItemWidth(170);
+    // ImGui::SliderFloat("up_x", &m_up.x, -1.0f, 1.0f, "%.2f degrees");
+    // ImGui::PopItemWidth();
 
-    ImGui::PushItemWidth(170);
-    ImGui::SliderFloat("up_y", &m_up.y, -10.0f, 10.0f, "%.2f degrees");
-    ImGui::PopItemWidth();
+    // ImGui::PushItemWidth(170);
+    // ImGui::SliderFloat("up_y", &m_up.y, -10.0f, 10.0f, "%.2f degrees");
+    // ImGui::PopItemWidth();
 
-    ImGui::PushItemWidth(170);
-    ImGui::SliderFloat("up_z", &m_up.z, -10.0f, 10.0f, "%.2f degrees");
-    ImGui::PopItemWidth();
+    // ImGui::PushItemWidth(170);
+    // ImGui::SliderFloat("up_z", &m_up.z, -10.0f, 10.0f, "%.2f degrees");
+    // ImGui::PopItemWidth();
 
-    ImGui::PushItemWidth(170);
-    ImGui::SliderFloat("eye_x", &m_eye.x, -1.0f, 1.0f, "%.2f degrees");
-    ImGui::PopItemWidth();
+    // ImGui::PushItemWidth(170);
+    // ImGui::SliderFloat("eye_x", &m_eye.x, -1.0f, 1.0f, "%.2f degrees");
+    // ImGui::PopItemWidth();
 
-    ImGui::PushItemWidth(170);
-    ImGui::SliderFloat("eye_y", &m_eye.y, -10.0f, 10.0f, "%.2f degrees");
-    ImGui::PopItemWidth();
+    // ImGui::PushItemWidth(170);
+    // ImGui::SliderFloat("eye_y", &m_eye.y, -10.0f, 10.0f, "%.2f degrees");
+    // ImGui::PopItemWidth();
 
-    ImGui::PushItemWidth(170);
-    ImGui::SliderFloat("eye_z", &m_eye.z, -10.0f, 10.0f, "%.2f degrees");
-    ImGui::PopItemWidth();
+    // ImGui::PushItemWidth(170);
+    // ImGui::SliderFloat("eye_z", &m_eye.z, -10.0f, 10.0f, "%.2f degrees");
+    // ImGui::PopItemWidth();
 
     ImGui::End();
   }
