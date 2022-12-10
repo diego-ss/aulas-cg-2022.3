@@ -22,30 +22,27 @@ private:
 
   Model m_model;
 
-  // cubos usados para gerar o espiral
-  struct Cube {
+  struct Star {
     glm::vec3 m_position{};
     glm::vec3 m_rotationAxis{};
   };
 
-  // array de cubos
-  std::array<Cube, 800> m_objects;
+  std::array<Star, 250> m_stars_left;
+  std::array<Star, 250> m_stars_right;
 
   float m_angle{};
 
   glm::mat4 m_viewMatrix{1.0f};
   glm::mat4 m_projMatrix{1.0f};
+  glm::vec3 m_eye{0.0f, 1.28f, 4.2f};
+  glm::vec3 m_at{0.0f, 0.3f, -1.0f};
+  glm::vec3 m_up{0.0f, 1.0f, -0.5f};
+
   float m_FOV{30.0f};
 
-  float m_spiralRadius{3.0f}; // RAIO DO ESPIRAL
-  float m_spiralStep{
-      m_spiralRadius /
-      m_objects.size()};      // PASSO DO ESPIRAL COM BASE NA QTD DE CUBOS
-  float m_TwoPI{M_PI * 2.0f}; // 2 * PI
   GLuint m_program{};
 
-  void generateSpiral();
-  void orientCamera(glm::vec3 const at);
+  void randomizeStar(Star &star, float xPos);
 };
 
 #endif
