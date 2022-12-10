@@ -25,13 +25,13 @@ private:
   Model m_model;
   Controller m_controller;
 
-  struct Star {
+  struct Block {
     glm::vec3 m_position{};
     glm::vec3 m_rotationAxis{};
     float m_inital_x{};
   };
 
-  std::array<Star, 200> m_stars_left;
+  std::array<Block, 240> m_blocks;
 
   float m_angle{};
 
@@ -41,10 +41,12 @@ private:
 
   float m_FOV{30.0f};
   float m_lerp_ref{0.0f};
+  float m_velocity;
 
   GLuint m_program{};
 
-  void randomizeStar(Star &star);
+  void changeXDirection(Block &block, float deltaTime, float orientation);
+  void changeYDirection(Block &block, float deltaTime, float orientation);
 };
 
 #endif
