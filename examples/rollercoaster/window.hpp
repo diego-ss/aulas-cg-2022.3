@@ -33,11 +33,8 @@ private:
 
   std::array<Block, 240> m_blocks;
 
-  float m_angle{};
-
   glm::mat4 m_viewMatrix{1.0f};
   glm::mat4 m_projMatrix{1.0f};
-  glm::mat4 m_modelMatrix{1.0f};
   GLint m_colorLocation{};
 
   float m_FOV{30.0f};
