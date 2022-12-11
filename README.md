@@ -1317,6 +1317,12 @@ abcg::OpenGLWindow::onPaintUI();
     <img alt="gif rollercoaster" src="https://user-images.githubusercontent.com/55899445/206919459-e1656c39-0905-4d1b-a9cf-045fb90e9c83.gif"/>
 </p>
 
+### OBSERVAÇÕES:
+Por algum motivo, no navegador o arquivo js está estourando uma exceção meio genérica. Não consegui identificar o problema. Porém está compilando e executando normalmente.
+
+![Captura de tela de 2022-12-11 14-50-18](https://user-images.githubusercontent.com/55899445/206920097-09bbaa5c-8d55-4279-b3b0-a89fb9a1124b.png)
+
+
 * * *
 </details>
 
