@@ -1039,7 +1039,7 @@ abcg::OpenGLWindow::onPaintUI();
   <summary>EXPANDIR PARA VISUALIZAR</summary>
 
 <p align="center">
-     
+    <img width="456" alt="rollercoasterscreenshot" src="https://user-images.githubusercontent.com/55899445/206919193-86a16a49-00ce-41e2-8537-121df04df460.png">
 </p>
 
 -   Link GitHub Pages: [RollerCoaster](https://diego-ss.github.io/cg-2022.3-UFABC/rollercoaster/)
@@ -1313,7 +1313,7 @@ abcg::OpenGLWindow::onPaintUI();
 
 ### Resultado Final
 <p align="center">
-    <!--GIF--/>
+    <img alt="gif rollercoaster" src="https://user-images.githubusercontent.com/55899445/206919459-e1656c39-0905-4d1b-a9cf-045fb90e9c83.gif"/>
 </p>
 
 * * *
