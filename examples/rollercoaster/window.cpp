@@ -10,7 +10,7 @@
 #include "window.hpp"
 
 void Window::onEvent(SDL_Event const &event) {
-  // Keyboard events
+  // capturando eventos de teclado
   if (event.type == SDL_KEYDOWN) {
     if (event.key.keysym.sym == SDLK_UP || event.key.keysym.sym == SDLK_w)
       m_controller.m_input.set(gsl::narrow<size_t>(Input::Up));
@@ -34,11 +34,13 @@ void Window::onEvent(SDL_Event const &event) {
 }
 
 void Window::onCreate() {
+  // carregando assets
   auto const assetsPath{abcg::Application::getAssetsPath()};
 
   abcg::glClearColor(0, 0, 0, 1);
   abcg::glEnable(GL_DEPTH_TEST);
 
+  // criando um openglprogram e carregando os shaders
   m_program =
       abcg::createOpenGLProgram({{.source = assetsPath + "depth.vert",
                                   .stage = abcg::ShaderStage::Vertex},
@@ -60,19 +62,19 @@ void Window::onCreate() {
   int index{0};                                   // CUBO ATUAL
   float actual_z{step};                           // REFERÊNCIA DA POSIÇÃO Z
 
-  for (auto &star : m_blocks) {
+  for (auto &block : m_blocks) {
     // CUBO IMPAR -> LADO DIREITO
     if (index % 2 == 1) {
-      star.m_inital_x = 1.5f;
+      block.m_inital_x = 1.5f;
       // CUBO PAR -> LADO ESQUERDO
     } else {
-      star.m_inital_x = -1.5f;
+      block.m_inital_x = -1.5f;
       actual_z -= step;
     }
 
-    star.m_position = glm::vec3(star.m_inital_x, 0.0f, actual_z);
-
-    star.m_rotationAxis = glm::sphericalRand(1.0f);
+    // atualizando posição
+    block.m_position = glm::vec3(block.m_inital_x, 0.0f, actual_z);
+    block.m_rotationAxis = glm::sphericalRand(1.0f);
     index = index + 1;
   }
 }
@@ -87,14 +89,19 @@ void Window::onUpdate() {
     block.m_position.z += deltaTime * m_velocity;
 
     if (m_controller.m_input[gsl::narrow<size_t>(Input::Right)]) {
+      // simulando curva à direita
       changeXDirection(block, deltaTime, -1.0f);
     } else if (m_controller.m_input[gsl::narrow<size_t>(Input::Left)]) {
+      // simulando curva à esquerda
       changeXDirection(block, deltaTime, 1.0f);
     } else if (m_controller.m_input[gsl::narrow<size_t>(Input::Down)]) {
+      // simulando descida
       changeYDirection(block, deltaTime, 1.0f);
     } else if (m_controller.m_input[gsl::narrow<size_t>(Input::Up)]) {
+      // simulando subida
       changeYDirection(block, deltaTime, -1.0f);
     } else {
+      // posição original
       block.m_position.x = block.m_inital_x;
       block.m_position.y = 0.0f;
       m_lerp_ref = 0.0f;
@@ -110,14 +117,21 @@ void Window::onUpdate() {
 
 void Window::changeYDirection(Block &block, float deltaTime,
                               float orientation) {
+  // calculando "suavizador da curva"
   m_lerp_ref += deltaTime / 200;
   m_lerp_ref = std::clamp(m_lerp_ref, 0.0f, 1.0f);
   float y_reta = 0.0f;
-  float y_curva = -sqrt(1 - pow((-block.m_position.z / 100) - 1, 2));
 
+  // gerando semi-circulo da curva com a equação y = (1-(z/100 - 1)²)
+  float y_curva = -sqrt(1 - pow((-block.m_position.z / 100) - 1, 2));
+  // atualizando posição
   block.m_position.y =
       orientation * std ::lerp(0.0f, y_curva * 3 + y_reta, m_lerp_ref);
 
+  // variando velocidade do "movimento" de acordo com a ação
+  // se subida, diminui a velocidade
+  // se descida, aumenta
+  // para dar a sensação de simulação
   if (orientation > 0)
     m_velocity = 20.0f;
   else
@@ -126,11 +140,15 @@ void Window::changeYDirection(Block &block, float deltaTime,
 
 void Window::changeXDirection(Block &block, float deltaTime,
                               float orientation) {
+  // calculando "suavizador da curva"
   m_lerp_ref += deltaTime / 200;
   m_lerp_ref = std::clamp(m_lerp_ref, 0.0f, 1.0f);
   float x_reta = block.m_inital_x;
+
+  // gerando semi-circulo da curva com a equação x = (1-(z/100 - 1)²)
   float x_curva = -sqrt(1 - pow((-block.m_position.z / 100) - 1, 2));
 
+  // atualizando posição
   block.m_position.x =
       orientation *
       std ::lerp(block.m_inital_x, x_curva * 3 + x_reta, m_lerp_ref);
@@ -156,7 +174,7 @@ void Window::onPaint() {
   // Renderizando blocos
   for (auto &block : m_blocks) {
     // Model matrix do block em questão
-    // escala -> translate
+    // escala -> translação
     glm::mat4 modelMatrix{1.0f};
     modelMatrix = glm::translate(modelMatrix, block.m_position);
     modelMatrix = glm::scale(modelMatrix, glm::vec3(0.2f));
@@ -165,7 +183,7 @@ void Window::onPaint() {
     abcg::glUniformMatrix4fv(modelMatrixLoc, 1, GL_FALSE, &modelMatrix[0][0]);
 
     // Variando a coloração dos trilhos de acordo com a proximidade da câmera
-    // a ideia é simular os trilhos esquentando
+    // a ideia é simular os trilhos 'esquentando' com o atrito
     if (block.m_position.z >= -4.0f) {
       float red_prop = (4 / -block.m_position.z);
       abcg::glUniform4f(m_colorLocation, 1.0f + red_prop, 1.0f - red_prop,

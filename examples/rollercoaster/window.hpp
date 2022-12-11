@@ -23,8 +23,6 @@ private:
   glm::ivec2 m_viewportSize{};
 
   Model m_box_model;
-  Model m_bunny_model;
-  int m_trianglesToDraw{};
   Controller m_controller;
 
   struct Block {

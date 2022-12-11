@@ -12,7 +12,8 @@ out vec4 fragColor;
 void main() {
   vec4 posEyeSpace = viewMatrix * modelMatrix * vec4(inPosition, 1);
 
-  float i = 1.0 - (-posEyeSpace.z / 100.0);
+  // a tonalidade varia de acordo com a profundidade e a altura 
+  float i = 1.0 - (-posEyeSpace.z / 50.0) + (posEyeSpace.y / 50.0);
   fragColor = vec4(i, i, i, i) * color;
 
   gl_Position = projMatrix * posEyeSpace;
