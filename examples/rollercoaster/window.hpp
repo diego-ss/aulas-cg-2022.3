@@ -22,7 +22,9 @@ private:
 
   glm::ivec2 m_viewportSize{};
 
-  Model m_model;
+  Model m_box_model;
+  Model m_bunny_model;
+  int m_trianglesToDraw{};
   Controller m_controller;
 
   struct Block {
@@ -37,6 +39,7 @@ private:
 
   glm::mat4 m_viewMatrix{1.0f};
   glm::mat4 m_projMatrix{1.0f};
+  glm::mat4 m_modelMatrix{1.0f};
   GLint m_colorLocation{};
 
   float m_FOV{30.0f};

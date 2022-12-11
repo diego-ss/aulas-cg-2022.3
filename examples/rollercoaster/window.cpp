@@ -45,8 +45,8 @@ void Window::onCreate() {
                                  {.source = assetsPath + "depth.frag",
                                   .stage = abcg::ShaderStage::Fragment}});
 
-  m_model.loadObj(assetsPath + "box.obj");
-  m_model.setupVAO(m_program);
+  m_box_model.loadObj(assetsPath + "box.obj");
+  m_box_model.setupVAO(m_program);
 
   // Câmera olhando para z negativo, localizada um pouco acima da origem e
   // levemente inclinada
@@ -173,7 +173,7 @@ void Window::onPaint() {
     } else
       abcg::glUniform4f(m_colorLocation, 1.0f, 1.0f, 1.0f, 1.0f);
 
-    m_model.render();
+    m_box_model.render();
   }
 
   abcg::glUseProgram(0);
@@ -190,6 +190,6 @@ void Window::onPaintUI() {
 void Window::onResize(glm::ivec2 const &size) { m_viewportSize = size; }
 
 void Window::onDestroy() {
-  m_model.destroy();
+  m_box_model.destroy();
   abcg::glDeleteProgram(m_program);
 }
